@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>处理用户输入</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+
+<body>
+    <div id="app-5">
+        <p>{{ message }}</p>
+        <button v-on:click="reverseMessage">逆转消息</button>
+    </div>
+    <script>
+        // 为了让用户和你的应用进行交互，我们可以用v-on指令添加一个事件监听器，通过它调用在Vue实例中定义的方法
+        var app5 = new Vue({
+            el: "#app-5",
+            data: {
+                message: 'hello vue js'
+            },
+            methods: {
+                reverseMessage: function () {
+                    console.log(this);
+                    this.message=this.message.split('').reverse().join("")
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
