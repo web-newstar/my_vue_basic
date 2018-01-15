@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>计算属性和观察者</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+</head>
+
+<body>
+    <div id="example">
+        <p>Original message: "{{ message }}"</p>
+        <p>Computed reversed message: "{{ reverseT() }}"</p>
+    </div>
+    <div id="demo">{{ fullName }}</div>
+    <div id="watch-example">
+        <p>
+            Ask a yes/no question:
+            <input v-model="question">
+        </p>
+        <p>{{ answer }}</p>
+    </div>
+    <div id="watch-exercise">
+        <p>
+            回到是yes或者no
+            <input v-model="question">
+        </p>
+        <p>{{answer}}</p>
+    </div>
+    <script>
+        //// 计算属性
+        // 模板内的表达式非常便利，但是设计它们的初衷是用于简单运算的。在模板中放入太多的逻辑会让模板过重且难以维护。   
+
+        // 对于任何复杂逻辑，你都应当使用计算属性。
+        // 基础例子
+        var vm = new Vue({
+            el: "#example",
+            data: {
+                message: "Hello"
+            },
+            computed: {
+                reversedMessage: function () {
+                    alert("这是计算属性")
+                    return this.message.split("").reverse().join("");
+                }
+            },
+            // 在组件中，
+            methods: {
+                reverseT: function () {
+                    alert("这是计算属性缓存")
+                    return this.message.split('').reverse().join('');
+                }
+            }
+        })
+        // 计算属性缓存vs方法
+        // 你可能已经注意到我们可以通过在表达式中调用方法来达到同样的效果：
+        // 我们可以将同一个函数定义为一个方法而不是一个计算属性。两种方式的最终结果确实是完全相同的。然而，不同的是计算属性是基于它的依赖进行缓存的。计算属性只有在它的相关依赖发生改变时才会重新求值。计算属性只有在它的相关依赖发生改变时才会重新求值。这就意味着只要 message 还没有发生改变，多次访问 reversedMessage 计算属性会立即返回之前的计算结果，而不必再次执行函数。
+
+        // 计算属性 vs 侦听属性
+        // Vue提供了一种更通用的方式来观察和响应Vue实例上的数据变动：倾听属性。
+        // 当你有一些数据需要随着其它数据变动而变动时，你很容易滥用 watch——特别是如果你之前使用过 AngularJS。然而，通常更好的做法是使用计算属性而不是命令式的 watch 回调
+
+        var vmTwo = new Vue({
+            el: "#demo",
+            data: {
+                firstName: 'Foo',
+                lastName: "Bar",
+                fullName: 'Foo Bars'
+            },
+            // watch: {
+            //     firstName: function (val) {
+            //         this.fullName = val + " " + this.lastName
+            //     },
+            //     lastName: function (val) {
+            //         this.fullName = this.firstName + " " + val
+            //     }
+            // },
+            computed: {
+                fullName: {
+                    // getter
+                    get: function () {
+                        return this.firstName + ' ' + this.lastName
+                    },
+                    // setter
+                    set: function (newValue) {
+                        console.log(newValue, 3323)
+                        var names = newValue.split(' ')
+                        this.firstName = names[0]
+                        this.lastName = names[names.length - 1]
+                    }
+                }
+            }
+        })
+
+        // 侦听器
+        // 虽然计算属性在大多数情况下更合适，但有时也需要一个自定义的侦听器。这就是为什么 Vue 通过 watch 选项提供了一个更通用的方法，来响应数据的变化。当需要在数据变化时执行异步或开销较大的操作时，这个方式是最有用的。
+        var watchExampleVM = new Vue({
+            el: '#watch-example',
+            data: {
+                question: '',
+                answer: 'I cannot give you an answer until you ask a question!'
+            },
+            watch: {
+                // 如果 `question` 发生改变，这个函数就会运行
+                question: function (newQuestion) {
+                    this.answer = 'Waiting for you to stop typing...'
+                    this.getAnswer()
+                }
+            },
+            methods: {
+                // `_.debounce` 是一个通过 Lodash 限制操作频率的函数。
+                // 在这个例子中，我们希望限制访问 yesno.wtf/api 的频率
+                // AJAX 请求直到用户输入完毕才会发出。想要了解更多关于
+                // `_.debounce` 函数 (及其近亲 `_.throttle`) 的知识，
+                // 请参考：https://lodash.com/docs#debounce
+                getAnswer: _.debounce(
+                    function () {
+                        if (this.question.indexOf('?') === -1) {
+                            this.answer = 'Questions usually contain a question mark. ;-)'
+                            return
+                        }
+                        this.answer = 'Thinking...'
+                        var vm = this
+                        axios.get('https://yesno.wtf/api')
+                            .then(function (response) {
+                                vm.answer = _.capitalize(response.data.answer)
+                            })
+                            .catch(function (error) {
+                                vm.answer = 'Error! Could not reach the API. ' + error
+                            })
+                    },
+                    // 这是我们为判定用户停止输入等待的毫秒数
+                    500
+                )
+            }
+        })
+        var watchOne = new Vue({
+            el: '#watch-exercise',
+            data: {
+                question: '',
+                answer: "如果你提问我就给你个回答"
+            },
+            watch: {
+                question: function (newQuestion) {
+                    console.log(newQuestion);
+                    this.answer = "正在输入问题";
+                    this.getAnswer();
+                }
+            },
+            methods: {
+                getAnswer: _.debounce(
+                    function () {
+                        if (this.question.indexOf("?") === -1) {
+                            this.answer = "请在输入的信息中包含一个问号标志";
+                            return;
+                        }
+                        console.log("发送请求")
+                        this.answer = '正在思考...';
+                        var vm = this;
+                        axios.get('https://yesno.wtf/api')
+                            .then(function (response) {
+                                vm.answer = _.capitalize(response.data.answer)
+                            })
+                            .catch(function (error) {
+                                vm.answer = 'Error! Could not reach the API. ' + error
+                            })
+                    },
+                    500
+                )
+            }
+        })
+    </script>
+</body>
+
+</html>

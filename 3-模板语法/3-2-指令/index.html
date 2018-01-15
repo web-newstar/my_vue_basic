@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>指令</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+    
+<body>
+    <script>
+        // 指令
+        // 指令 (Directives) 是带有 v- 前缀的特殊属性。指令属性的值预期是单个 JavaScript 表达式 (v-for 是例外情况，稍后我们再讨论)。指令的职责是，当表达式的值改变时，将其产生的连带影响，响应式地作用于 DOM。
+
+        // 参数
+        // 一些指令能够接收一个“参数”，在指令名称之后以冒号表示。例如，v-bind 指令可以用于响应式地更新 HTML 属性：
+
+        // 修饰符
+        // 修饰符 (Modifiers) 是以半角句号 . 指明的特殊后缀，用于指出一个指令应该以特殊方式绑定
+
+        // 缩写
+        // <a v-bind:href="url">...</a>
+        // <a :href="url">...</a>
+        // <a v-on:click="doSomething">...</a>
+        // <a @click="doSomething">...</a>
+    </script>
+</body>
+
+</html>
