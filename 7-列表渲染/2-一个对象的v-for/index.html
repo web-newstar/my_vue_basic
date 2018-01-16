@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>列表渲染 一个对象的v-for</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+</head>
+
+<body>
+    <ul id="v-for-object" class="demo">
+        <li v-for="(value,key,index) in object">
+            {{ value }} + {{key}} + {{index}}
+        </li>
+    </ul>
+    <ul id="v-key">
+        <li v-for="item in items" :key="">
+            {{item.message}}
+        </li>
+        <button @click="reverse()">点击我  </button>
+    </ul>
+    <script>
+        // 你也可以用 v-for 通过一个对象的属性来迭代。
+        // 你也可以提供第二个的参数为键名：
+        // 第三个参数为索引：
+        new Vue({
+            el: '#v-for-object',
+            data: {
+                object: {
+                    firstName: 'John',
+                    lastName: 'Doe',
+                    age: 30
+                }
+            }
+        })
+
+        // key
+        // 为了给 Vue 一个提示，以便它能跟踪每个节点的身份，从而重用和重新排序现有元素，你需要为每项提供一个唯一 key 属性。理想的 key 值是每项都有的且唯一的 id。这个特殊的属性相当于 Vue 1.x 的 track-by ，但它的工作方式类似于一个属性，所以你需要用 v-bind 来绑定动态值 (在这里使用简写)：
+        new Vue({
+            el: '#v-key',
+            data: {
+                items:[
+                    {message:"你",id:"1"},
+                    {message:"们",id:"2"},
+                    {message:"好",id:"3"},
+                ]
+            },
+            methods:{
+                reverse:function(){
+                    this.items=this.items.reverse();
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
