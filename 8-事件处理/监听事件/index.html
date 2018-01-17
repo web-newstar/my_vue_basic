@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>监听事件</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+</head>
+
+<body>
+    <div id="example-1">
+        <button v-on:click="counter+=1">add 1</button>
+        <p>你点击了 {{counter}} 次</p>
+    </div>
+    <div id="example-2">
+        <button v-on:click="greet">greet</button>
+    </div>
+    <div id="example-3">
+        <button v-on:click="say('HI',$event)">HI</button>
+        <button v-on:click="say('HELLO')">HELLO</button>
+    </div>
+    <script>
+        // 可以使用 v-on 指令监听dom事件，并触发运行时一些Javascript
+        var example1 = new Vue({
+            el: "#example-1",
+            data: {
+                counter: 0
+            }
+        })
+
+        // 事件处理方法
+        // 然而许多事件处理逻辑会更为复杂，所以直接把 JavaScript 代码写在 v-on 指令中是不可行的。因此 v-on 还可以接收一个需要调用的方法名称。
+        var example2 = new Vue({
+            el: '#example-2',
+            data: {
+                name: 'Vue.js'
+            },
+            // 在 `methods` 对象中定义方法
+            methods: {
+                greet: function (event) {
+                    // `this` 在方法里指向当前 Vue 实例
+                    alert('Hello ' + this.name + '!')
+                    // `event` 是原生 DOM 事件
+                    if (event) {
+                        alert(event.target.tagName)
+                    }
+                }
+            }
+        })
+
+        // 内联处理器中的方法
+        // 除了直接绑定一个方法，也可以在内联Javascript语句中调用方法
+        // 有时也需要在内联语句处理器中访问原始的 DOM 事件。可以用特殊变量 $event 把它传入方法
+        var example3=new Vue({
+            el:"#example-3",
+            data:{
+
+            },
+            methods:{
+                say:function(message,event){
+
+                    alert(message)
+                    if(event){
+                        alert(event.target.tagName)
+                    }
+                }
+            }
+        })
+    </script>
+
+</body>
+
+</html>

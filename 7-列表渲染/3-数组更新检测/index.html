@@ -16,6 +16,7 @@
         <li v-for="item in items">{{item.message}}</li>
     </ul>
     <script>
+        // 变异方法
         // Vue包含一组观察数组的变异方法，所以它们也会触发视图更新
         // 包含push pop shift unshift splice sort reverse
         var vm=new Vue({
@@ -27,6 +28,22 @@
                 ]
             }
         })
+
+        // 替换数组
+        // 变异方法 (mutation method)，顾名思义，会改变被这些方法调用的原始数组。相比之下，也有非变异 (non-mutating method) 方法，
+        // 当使用非变异方法时，可以用新数组替换旧数组
+        // filter(), concat() 和 slice()
+
+        // 注意事项
+        // 由于Javascript的限制，Vue不能检测以下变动的数组
+          // 1 当你利用索引直接设置一个项时
+          // 2 当你修改数组的长度时
+
+          // 为了解决第一类问题，以下两种方式都可以实现
+          Vue.set(vm.items,1,{message:"您"})
+          vm.items.splice(1,1,{message:"好"})
+          // 为了解决第二类问题
+        //   vm.items.splice({message:"jia"})
     </script>
 </body>
 

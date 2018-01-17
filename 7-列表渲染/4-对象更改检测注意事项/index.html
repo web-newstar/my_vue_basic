@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>数组更改检测注意事项</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+</head>
+
+<body>
+    <div id="vm"></div>
+    <div id="index"></div>
+    <script>
+        // 由于javascript的限制，Vue不能检测对象属性的添加和删除
+        var vm = new Vue({
+            el: "#vm",
+            data: {
+                a: 1
+            }
+        })
+        // vm.a是响应的
+        vm.b = "b"
+        // vm.b不是响应式的
+
+        // 对于已经创建的实例，Vue不能动态添加根级别的响应式属性。但是可以使用Vue.set(object,key,value)方法嵌套对象添加响应式属性。
+        var index = new Vue({
+            el: "#index",
+            data: {
+                userProfile: {
+                    name: "lt"
+                }
+            }
+        })
+        // 你可以添加一个新的 age 属性到嵌套的 userProfile 对象：
+        Vue.set(index.userProfile, "age", 12)
+        // 也可以使用 $set
+        // .$set(this.userProfile, 'age', 27) // 这个方法好像有问题
+
+        // 有时你可能需要为已有对象赋予多个新属性，比如使用Object.assign()或 _.extend()
+        index.userProfile = Object.assign({}, index.userProfile, {
+            age: 27,
+            favoriteColor: 'Vue Green'
+        })
+        console.log(index.userProfile)
+    </script>
+</body>
+
+</html>

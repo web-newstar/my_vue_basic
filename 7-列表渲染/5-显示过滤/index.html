@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>显示过滤排序的结果</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+</head>
+
+<body>
+    <ul id="ul">
+        <li v-for="n in evenNumbers">{{ n }}</li>
+    </ul>
+    <ul id="id2">
+        <li v-for="n in even(numbers)">{{n}}</li>
+    </ul>
+    <div id="number">
+        <span v-for="n in 10">{{n}}</span>
+    </div>
+    <ul id="for">
+        <template v-for="item in items">
+            <li>{{item.message}}</li>
+            <li class="divider"></li>
+        </template>
+    </ul>
+    <ul id="good">
+        <li v-for="item in items" v-if="item.isComplate">
+            {{item.message}}
+        </li>
+    </ul>
+    <div id="todo-list-example">
+        <input v-model="newTodoText" v-on:keyup.enter="addNewTodo" placeholder="add a todo">
+        <ul>
+            <li is="todo-item" v-for="(todo,index) in todos" v-bind:key="todo.id" v-bind:title="todo.title" v-on:remove="todos.splice(index,1)"></li>
+        </ul>
+    </div>
+    <script>
+        // 有时，我们想要显示一个数组的过滤或排序副本，而不实际改变或重置原始数据。在这种情况下，可以创建返回过滤或排序数组的计算属性。
+        var vm = new Vue({
+            el: "#ul",
+            data: {
+                numbers: [1, 2, 3, 4, 5, 6]
+            },
+            computed: {
+                evenNumbers: function () {
+                    return this.numbers.filter(function (number) {
+                        return number % 2 === 0;
+                    })
+                }
+            }
+        })
+
+        // 在计算属性不适用的情况下 (例如，在嵌套 v-for 循环中) 你可以使用一个 method 方法：
+        var vm2 = new Vue({
+            el: "#id2",
+            data: {
+                numbers: [1, 2, 3, 4, 5, 6]
+            },
+            methods: {
+                even: function (numbers) {
+                    return numbers.filter(function (number) {
+                        return number % 2 === 0
+                    })
+                }
+            }
+        })
+
+        // 一段取值范围的 V-FOR
+
+        // v-for 也可以取整数。在这种情况下，它将重复多次模板。
+        var numer = new Vue({
+            el: "#number",
+        })
+
+        // v-for on a <template>
+        // 类似于 v-if 你也可以利用带有 v-for 的 <template> 渲染多个元素
+        var fors = new Vue({
+            el: "#for",
+            data: {
+                items: [
+                    { message: "foo" },
+                    { message: "bar" },
+                    { message: "too" }
+                ]
+            }
+        })
+
+        // v-for with v-if
+        // 当它们处于同一节点，v-for的优先级要比v-if更高，这意味着v-if分别重复运行于每个 v-for 循环中。当你想为仅有的一些选项渲染节点时，这种优先级的机制非常有用
+        var good = new Vue({
+            el: "#good",
+            data: {
+                items: [
+                    { message: '显示', isComplate: true },
+                    { message: '显示', isComplate: true },
+                    { message: '不显示', isComplate: false },
+                    { message: '显示', isComplate: true },
+                    { message: '不显示', isComplate: false },
+
+                ]
+            }
+        })
+
+        // 一个组件的 v-for
+        // 在自定义组件里，你可以像任何普通元素一样用 v-for
+        // <my-component v-for="item in items" :key="item.id"></my-component>
+        // 然而任何数据不会自动传递到组件里，因为组件有自己独立的作用域。为了把迭代数据传递到组件里，我们要用props
+        // <my-component v-for="(item,index) in items" v-bind:item="item" v-bind:index="index" v-bind:key="item.id"></my-component>
+        Vue.component('todo-item', {
+            template: '\
+                <li>\
+                {{ title }}\
+                <button v-on:click="$emit(\'remove\')">X</button>\
+                </li>\
+            ',
+            props: ['title']
+        })
+        new Vue({
+            el: '#todo-list-example',
+            data: {
+                newTodoText: '',
+                todos: [
+                    {
+                        id: 1,
+                        title: 'Do the dishes',
+                    },
+                    {
+                        id: 2,
+                        title: 'Take out the trash',
+                    },
+                    {
+                        id: 3,
+                        title: 'Mow the lawn'
+                    }
+                ],
+                nextTodoId: 4
+            },
+            methods: {
+                addNewTodo: function () {
+                    this.todos.push({
+                        id: this.nextTodoId++,
+                        title: this.newTodoText
+                    })
+                    this.newTodoText = ''
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
