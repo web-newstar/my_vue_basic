@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>使用组件</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+</head>
+
+<body>
+    <div id="example">
+        <simple-counter></simple-counter>
+        <simple-counter></simple-counter>
+        <simple-counter></simple-counter>        
+    </div>
+    <script>
+        var data={
+            counter:0
+        }
+        Vue.component('simple-counter',{
+            template:'<button v-on:click="counter+=1">{{counter}}</button>',
+            data:function(){
+                return {
+                    counter:1
+                }
+            }
+        })
+        new Vue({
+            el:"#example"
+        })
+
+        // 组件组合
+        // 组件的设计初衷是要配合使用的，最常见的就是形成父子间的组合关系：组件A在它的模板中使用了组件B。它们之间不然是需要相互通信的，父组件可能需要给子组件下发数据，子组件可能需要将它内部发生的事情告诉父组件。然而，通过一个良好的的接口尽可能将父子组件解耦是非常重要的，这保证了组件在相对隔离的环境中书写和理解，从而可提高了其可维护性和复用性；
+        // 在vue组件，父子组件的关系可以总结为prop向下传递，事件向上传递，父组件通过prop给子组件向下发数据，子组件通过事件给父组件发送信息。
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>字面量语法vs动态语法</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+</head>
+
+<body>
+    <child my-message="hello" id='child'></child>
+    <div id="example-2">
+        <input v-model='parentMsg'>
+        <br>
+        <child v-bind:my-message="parentMsg"></child>
+    </div>
+    <div id="example-3">
+        <todo-item v-bind="todo"></todo-item>
+    </div>
+    <script>  
+        // 2 使用props传递数据
+        // 作用实例的作用域实例是孤立的（这意味着不能也不应该在子组件里直接饮用父组件的数据）
+        // 子组件要显式地用 props 选项声明它预期的数据：
+        Vue.component('child', {
+            props: ['myMessage'],
+            template: "<div>{{myMessage}}</div>"
+        })
+        new Vue({
+            el: "#child",
+        })
+
+        // camelCase vs. kebab-case
+        // html特性是不区分大小写的。
+
+        // 3 动态Prop
+        // 与绑定到任何普通的 HTML 特性相类似，我们可以用 v-bind 来动态地将 prop 绑定到父组件的数据。每当父组件的数据变化时，该变化也会传导给子组件：
+        new Vue({
+            el: "#example-2",
+            data: {
+                parentMsg: ''
+            }
+        })
+
+        // 如果想把一个对象的所有属性作为prop进行传递，可是使用不带参数的 v-bind
+        Vue.component("todo-item", {
+            props:['todo'],
+            template: "<div>{{todo.text}}</div>"
+        })
+        new Vue({
+            el: "#example-3",
+            data: {
+                message:'sad',
+                todo: {
+                    text: 'Learn Vue',
+                    isComplete: false
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

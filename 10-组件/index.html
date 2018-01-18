@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>组件</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+</head>
+
+<body>
+    <div id="example">
+        <my-component></my-component>
+    </div>
+    <script>
+        // 组件是Vue.js强大的功能之一。组件可以扩展html元素，封装可重用的代码。在较高层面上，组件是自定义元素,vue.js为它添加特殊功能。在有些情况下，组件也可以表现为用 is 特性进行扩展原生html元素
+        
+        // 所有的Vue组件都是Vue的实例，所以可接受相同的选项对象并提供相同的生命周期钩子。
+        // 使用组件
+
+        // 1 全局注册
+        // 要注册一个全局组件，可以使用 Vue.component(tagName,options)
+        Vue.component('my-component',{
+            // 选型
+            template:"<div>这是一个vue组件</div>"
+        })
+        // 组件在注册后，便可以作为自定义元素在模板中使用。注意在初始化实例之前注册组件
+        new Vue({
+            el:"#example"
+        })
+        // 2 局部注册
+        // 你不必把每个组件都注册到全局。你可以通过某个Vue实例或者组件的实例选项 components注册仅在其作用域可用的组件
+        var child={
+            template:"<div>a compo</div>"
+        }
+        new Vue({
+            components:{
+                'my-component':child
+            }
+        })
+
+        // 3 DOM模板解析注意事项
+        // 当使用DOM作为模板时(使用el选项把Vue实例挂载到一个已有内容的元素上)，你会收到html本身的一些限制，因为Vue实例只有在浏览器解析，规范化模板后才能获取其内容
+        // 变通的方案是使用特殊的 is 特性：
+        <table>
+            <tr is="my-component"></tr>
+        </table>
+
+        // data必须是函数，
+    </script>
+
+</body>
+
+</html>
